@@ -1,3 +1,4 @@
+# DESTRUCTIVE
 echo "============================================================"
 echo "  WARNING: This setup BREAKS the kube-apiserver."
 echo "  Only run this if you are prepared to fix it immediately."

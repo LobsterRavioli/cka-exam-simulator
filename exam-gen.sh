@@ -86,6 +86,7 @@ chmod +x "$SETUP_FILE"
 
 Q=0
 MISSING=()
+DESTRUCTIVE=()
 
 for topic_dir in "$TOPICS_DIR"/*/; do
   [[ -d "$topic_dir" ]] || continue
@@ -143,11 +144,30 @@ for topic_dir in "$TOPICS_DIR"/*/; do
     echo ""
     echo "# Q${Q}: ${topic} / ${var_id}"
     if [[ -f "$chosen/setup.bash" ]]; then
-      cat "$chosen/setup.bash"
+      if grep -q '^# DESTRUCTIVE' "$chosen/setup.bash" 2>/dev/null; then
+        rel="${chosen#"$SCRIPT_DIR/"}"
+        DESTRUCTIVE+=("Q${Q}: ${topic} — run manually: bash ${rel}setup.bash")
+        echo "echo '[SKIP] Q${Q} ${topic}: destructive setup — run manually when ready'"
+      else
+        cat "$chosen/setup.bash"
+      fi
     fi
     echo ""
   } >> "$SETUP_FILE"
 done
+
+if [[ ${#DESTRUCTIVE[@]} -gt 0 ]]; then
+  {
+    echo ""
+    echo "echo ''"
+    echo "echo '================================================'"
+    echo "echo ' Destructive setups (run manually when ready):'"
+    echo "echo '================================================'"
+    for note in "${DESTRUCTIVE[@]}"; do
+      echo "echo '  - ${note}'"
+    done
+  } >> "$SETUP_FILE"
+fi
 
 {
   echo ""
