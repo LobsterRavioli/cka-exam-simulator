@@ -1,0 +1,44 @@
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-local
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fast-pvc
+  namespace: default
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: fast-local
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-consumer
+  namespace: default
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.21
+    volumeMounts:
+    - name: web
+      mountPath: /usr/share/nginx/html
+  volumes:
+  - name: web
+    persistentVolumeClaim:
+      claimName: fast-pvc
+EOF
+
+# Wait for Pod to be scheduled, then verify PVC is Bound
+kubectl wait pod/pvc-consumer --for=condition=Ready --timeout=60s
+kubectl get pvc fast-pvc
+```

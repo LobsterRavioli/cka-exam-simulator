@@ -1,0 +1,19 @@
+**Task** (5%)
+
+1. Install **cert-manager** by applying its manifest:
+   ```
+   https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.yaml
+   ```
+
+2. Wait for all cert-manager pods in namespace `cert-manager` to be `Running`.
+
+3. Create a **ClusterIssuer** named `selfsigned-issuer`:
+   - Type: `selfSigned`
+
+4. Create a **Certificate** named `test-cert` in namespace `default`:
+   - SecretName: `test-cert-tls`
+   - IssuerRef: `selfsigned-issuer` (kind: ClusterIssuer)
+   - DNSNames: `["example.local"]`
+   - Duration: `2160h` (90 days)
+
+5. Verify: `kubectl get certificate test-cert -n default` shows `READY=True`.

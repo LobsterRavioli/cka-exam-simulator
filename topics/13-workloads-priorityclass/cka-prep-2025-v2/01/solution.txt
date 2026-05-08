@@ -1,0 +1,42 @@
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: "Used for critical production workloads"
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: low-priority
+value: 100
+globalDefault: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: critical-pod
+spec:
+  priorityClassName: high-priority
+  containers:
+  - name: nginx
+    image: nginx:1.21
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: background-pod
+spec:
+  priorityClassName: low-priority
+  containers:
+  - name: busybox
+    image: busybox:1.35
+    command: ["sleep", "3600"]
+EOF
+
+kubectl wait pod/critical-pod pod/background-pod --for=condition=Ready --timeout=60s
+kubectl get pod critical-pod background-pod -o custom-columns='NAME:.metadata.name,PRIORITY:.spec.priority,STATUS:.status.phase'
+```

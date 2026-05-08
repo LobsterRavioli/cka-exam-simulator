@@ -1,0 +1,15 @@
+**Task** (5%)
+
+A Deployment named `web-api` exists in namespace `autoscale`.
+
+1. Ensure the `web-api` Deployment has CPU resource requests set:
+   - Request: `cpu=100m`
+
+2. Create a **HorizontalPodAutoscaler** named `web-api-hpa` for `web-api`:
+   - Min replicas: `2`
+   - Max replicas: `10`
+   - Target CPU utilisation: `50%`
+
+3. Verify: `kubectl get hpa web-api-hpa -n autoscale`
+
+4. Write the current replica count to `/tmp/hpa-replicas.txt`.

@@ -1,0 +1,22 @@
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+  namespace: web
+spec:
+  type: NodePort
+  selector:
+    app: web-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+EOF
+
+# Verify
+kubectl get svc web-svc -n web
+curl http://localhost:30080
+```

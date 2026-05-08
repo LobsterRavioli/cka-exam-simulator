@@ -1,0 +1,42 @@
+```bash
+# Create deployment
+kubectl apply -f - <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  namespace: app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+EOF
+
+kubectl rollout status deployment/nginx-deploy -n app
+
+# Update image
+kubectl set image deployment/nginx-deploy nginx=nginx:1.25 -n app
+kubectl annotate deployment/nginx-deploy kubernetes.io/change-cause="upgrade to 1.25" -n app
+kubectl rollout status deployment/nginx-deploy -n app --timeout=60s
+
+# Rollback if needed
+# kubectl rollout undo deployment/nginx-deploy -n app
+
+# Record current version
+kubectl get deployment nginx-deploy -n app -o jsonpath='{.spec.template.spec.containers[0].image}' > /tmp/nginx-version.txt
+cat /tmp/nginx-version.txt
+```

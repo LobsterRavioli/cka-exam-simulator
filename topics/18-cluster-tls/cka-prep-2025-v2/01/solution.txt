@@ -1,0 +1,26 @@
+```bash
+# Backup before editing
+cp /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/kube-apiserver-backup.yaml
+
+# Add the flag (insert after the first 'command:' block entry)
+# Use vi or sed:
+sed -i '/- kube-apiserver/a\    - --tls-min-version=VersionTLS13' \
+  /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# Verify the flag was added
+grep tls-min-version /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# Wait for apiserver restart
+echo "Waiting for kube-apiserver to restart..."
+sleep 20
+
+# Confirm it's running
+kubectl get pod -n kube-system | grep apiserver
+ps aux | grep tls-min-version
+
+# Create ConfigMap
+kubectl create configmap tls-config \
+  --from-literal=min-version=TLS1.3 \
+  --from-literal=configured-by=kube-apiserver-manifest \
+  -n kube-system
+```

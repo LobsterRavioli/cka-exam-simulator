@@ -1,0 +1,20 @@
+**Task** (7%)
+
+The kube-apiserver is failing to start. Pods on the cluster are not being scheduled.
+
+1. Investigate why the kube-apiserver is not running:
+   - Check `/etc/kubernetes/manifests/kube-apiserver.yaml`
+   - Check `crictl ps -a | grep apiserver`
+   - Check kubelet logs: `journalctl -u kubelet | tail -50`
+
+2. The `--etcd-servers` flag contains an incorrect port. The correct etcd port is `2379`.
+
+3. Fix the static pod manifest and wait for the kube-apiserver to recover.
+
+4. Verify the cluster is healthy:
+   ```
+   kubectl get nodes
+   kubectl get pods -n kube-system
+   ```
+
+> **Warning:** this exercise modifies a static pod manifest. Be careful with YAML indentation.

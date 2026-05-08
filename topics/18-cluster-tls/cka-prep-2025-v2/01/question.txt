@@ -1,0 +1,22 @@
+**Task** (5%)
+
+Configure the kube-apiserver to enforce a minimum TLS version.
+
+1. Edit the static pod manifest at `/etc/kubernetes/manifests/kube-apiserver.yaml`.
+
+2. Add the following flag to the `command` section:
+   ```
+   - --tls-min-version=VersionTLS13
+   ```
+
+3. Wait for the kube-apiserver to restart (kubelet detects the change automatically).
+
+4. Verify the flag is active:
+   ```
+   kubectl get pod -n kube-system | grep apiserver
+   ps aux | grep tls-min-version
+   ```
+
+5. Create a **ConfigMap** named `tls-config` in namespace `kube-system`:
+   - Key `min-version`: `TLS1.3`
+   - Key `configured-by`: `kube-apiserver-manifest`

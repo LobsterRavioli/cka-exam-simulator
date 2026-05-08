@@ -1,0 +1,39 @@
+```bash
+# Taint and label the node
+kubectl taint node node01 dedicated=gpu:NoSchedule
+kubectl label node node01 hardware=gpu
+
+# Create gpu-pod with toleration and affinity
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-pod
+  namespace: default
+spec:
+  tolerations:
+  - key: "dedicated"
+    value: "gpu"
+    effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: hardware
+            operator: In
+            values: [gpu]
+  containers:
+  - name: nginx
+    image: nginx:1.21
+EOF
+
+# Create regular-pod (no toleration)
+kubectl run regular-pod --image=nginx:1.21
+
+kubectl wait pod/gpu-pod --for=condition=Ready --timeout=60s
+
+# Verify scheduling
+kubectl get pod gpu-pod -o wide
+kubectl get pod regular-pod -o wide
+```

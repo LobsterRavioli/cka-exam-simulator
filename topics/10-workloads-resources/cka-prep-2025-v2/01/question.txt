@@ -1,0 +1,15 @@
+**Task** (4%)
+
+A Deployment named `api-server` exists in namespace `production`.
+
+1. Update all containers in `api-server` to set:
+   - Requests: `cpu=100m`, `memory=128Mi`
+   - Limits: `cpu=500m`, `memory=256Mi`
+
+2. Create a **LimitRange** named `default-limits` in namespace `production`:
+   - Default CPU request: `50m`
+   - Default memory request: `64Mi`
+   - Default CPU limit: `200m`
+   - Default memory limit: `128Mi`
+
+3. Verify: `kubectl describe limitrange default-limits -n production`

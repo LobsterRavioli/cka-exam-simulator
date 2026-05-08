@@ -1,0 +1,28 @@
+```bash
+# Set resource requests and limits
+kubectl set resources deployment api-server -n production \
+  --requests=cpu=100m,memory=128Mi \
+  --limits=cpu=500m,memory=256Mi
+
+kubectl rollout status deployment/api-server -n production
+
+# Create LimitRange
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-limits
+  namespace: production
+spec:
+  limits:
+  - type: Container
+    default:
+      cpu: 200m
+      memory: 128Mi
+    defaultRequest:
+      cpu: 50m
+      memory: 64Mi
+EOF
+
+kubectl describe limitrange default-limits -n production
+```

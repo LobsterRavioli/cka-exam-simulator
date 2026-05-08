@@ -1,0 +1,17 @@
+**Task** (5%)
+
+A Deployment named `webapp` exists in namespace `logging`.
+The main container writes logs to `/var/log/app/app.log`.
+
+Add a **sidecar container** to the Deployment:
+- Name: `log-agent`
+- Image: `busybox:1.35`
+- Command: `["sh", "-c", "tail -f /var/log/app/app.log"]`
+- Mount a shared `emptyDir` volume at `/var/log/app`
+
+Also mount the same `emptyDir` volume in the main container at `/var/log/app`.
+
+**Verify:** check that `log-agent` is running and tailing the log file:
+```
+kubectl logs -n logging <pod-name> -c log-agent
+```

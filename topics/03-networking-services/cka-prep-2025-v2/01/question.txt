@@ -1,0 +1,15 @@
+**Task** (4%)
+
+A Deployment named `web-app` already exists in namespace `web`.
+
+1. Create a **NodePort Service** named `web-svc` in namespace `web`:
+   - Selector: `app=web-app`
+   - Port: `80` → targetPort: `80`
+   - NodePort: `30080`
+   - Protocol: TCP
+
+2. Verify connectivity: from the control-plane node, run:
+   ```
+   curl http://localhost:30080
+   ```
+   It should return the nginx welcome page.

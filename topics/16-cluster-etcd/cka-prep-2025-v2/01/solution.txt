@@ -1,0 +1,21 @@
+```bash
+# Inspect the manifest
+grep etcd-servers /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# Fix the port: 1234 -> 2379
+sed -i 's|etcd-servers=https://127.0.0.1:1234|etcd-servers=https://127.0.0.1:2379|' \
+  /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# Verify the fix
+grep etcd-servers /etc/kubernetes/manifests/kube-apiserver.yaml
+
+# kubelet picks up the manifest change automatically; wait for recovery
+echo "Waiting for kube-apiserver to restart..."
+sleep 20
+
+kubectl get nodes
+kubectl get pods -n kube-system | grep apiserver
+
+# Alternative: restore from backup
+# cp /tmp/kube-apiserver-backup.yaml /etc/kubernetes/manifests/kube-apiserver.yaml
+```

@@ -1,0 +1,20 @@
+**Task** (5%)
+
+Install **ArgoCD** using Helm with the following requirements:
+
+1. Add the Helm repository:
+   - Name: `argo`
+   - URL: `https://argoproj.github.io/argo-helm`
+
+2. Create the namespace `argocd`.
+
+3. Install the chart with:
+   - Chart: `argo/argo-cd`
+   - Release name: `argocd`
+   - Namespace: `argocd`
+   - Flag: `--skip-crds` (do NOT install CRDs)
+   - Set: `server.service.type=NodePort`
+
+4. Wait for all pods in namespace `argocd` to be `Running`.
+
+5. Write the ArgoCD server NodePort to `/tmp/argocd-port.txt`.

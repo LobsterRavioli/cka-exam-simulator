@@ -1,0 +1,35 @@
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-policy
+  namespace: production
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          env: monitoring
+    ports:
+    - protocol: TCP
+      port: 5432
+EOF
+
+# Verify policy is applied
+kubectl get networkpolicy backend-policy -n production
+
+# Test from frontend pod (should succeed)
+FRONTEND_POD=$(kubectl get pod -n production -l app=frontend -o jsonpath='{.items[0].metadata.name}')
+BACKEND_IP=$(kubectl get pod -n production -l app=backend -o jsonpath='{.items[0].status.podIP}')
+kubectl exec -n production "$FRONTEND_POD" -- curl -s --max-time 3 "http://$BACKEND_IP" && echo "OK: frontend can reach backend"
+```

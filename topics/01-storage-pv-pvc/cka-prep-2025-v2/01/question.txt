@@ -1,0 +1,24 @@
+**Task** (4%)
+
+Perform the following storage tasks:
+
+1. Create a **PersistentVolume** named `mariadb-pv`:
+   - Capacity: `1Gi`
+   - AccessMode: `ReadWriteOnce`
+   - StorageClassName: `manual`
+   - ReclaimPolicy: `Retain`
+   - HostPath: `/mnt/mariadb-data`
+
+2. Create the namespace `mariadb`.
+
+3. Create a **PersistentVolumeClaim** named `mariadb-pvc` in namespace `mariadb`:
+   - StorageClassName: `manual`
+   - AccessMode: `ReadWriteOnce`
+   - Requests: `500Mi`
+
+4. Deploy a **Pod** named `mariadb` in namespace `mariadb`:
+   - Image: `mariadb:10.6`
+   - Env: `MYSQL_ROOT_PASSWORD=secret`
+   - Mount `mariadb-pvc` at `/var/lib/mysql`
+
+**Verify:** the PVC status is `Bound` and the Pod is `Running`.

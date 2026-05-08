@@ -1,0 +1,19 @@
+```bash
+# Ensure CPU requests are set
+kubectl set resources deployment web-api -n autoscale --requests=cpu=100m
+
+# Create HPA
+kubectl autoscale deployment web-api \
+  --name=web-api-hpa \
+  --min=2 \
+  --max=10 \
+  --cpu-percent=50 \
+  -n autoscale
+
+# Verify
+kubectl get hpa web-api-hpa -n autoscale
+
+# Write replica count
+kubectl get deployment web-api -n autoscale -o jsonpath='{.spec.replicas}' > /tmp/hpa-replicas.txt
+cat /tmp/hpa-replicas.txt
+```

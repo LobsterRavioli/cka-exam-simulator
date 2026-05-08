@@ -1,0 +1,19 @@
+**Task** (6%)
+
+1. Create the namespace `ci`.
+
+2. Create a **ServiceAccount** named `ci-runner` in namespace `ci`.
+
+3. Create a **Role** named `deployer` in namespace `ci` with permissions:
+   - `get`, `list`, `watch` on `pods`
+   - `create`, `update`, `patch`, `get`, `list` on `deployments`
+
+4. Create a **RoleBinding** named `ci-deployer` in namespace `ci`:
+   - Bind `ci-runner` ServiceAccount to the `deployer` Role
+
+5. Verify with:
+   ```
+   kubectl auth can-i create deployments --as=system:serviceaccount:ci:ci-runner -n ci
+   kubectl auth can-i delete deployments --as=system:serviceaccount:ci:ci-runner -n ci
+   ```
+   First should return `yes`, second `no`.

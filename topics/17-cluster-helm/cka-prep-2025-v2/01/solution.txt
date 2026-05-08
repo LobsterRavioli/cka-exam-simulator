@@ -1,0 +1,17 @@
+```bash
+helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --skip-crds \
+  --set server.service.type=NodePort
+
+kubectl rollout status deployment/argocd-server -n argocd --timeout=180s
+
+kubectl get svc argocd-server -n argocd -o jsonpath='{.spec.ports[?(@.port==443)].nodePort}' \
+  > /tmp/argocd-port.txt
+cat /tmp/argocd-port.txt
+```

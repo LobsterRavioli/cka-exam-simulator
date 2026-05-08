@@ -1,0 +1,19 @@
+**Task** (4%)
+
+1. Identify which CNI plugin is installed on this cluster:
+   - Check `/etc/cni/net.d/` on the control-plane node
+   - Check running pods in `kube-system`
+
+2. Create namespace `net-test`.
+
+3. Deploy two pods in `net-test`:
+   - `server`: image `nginx:1.21`, label `app=server`
+   - `client`: image `busybox:1.35`, command `["sleep", "3600"]`
+
+4. Expose `server` as a ClusterIP Service named `server-svc` on port `80`.
+
+5. From the `client` pod, verify:
+   - DNS resolution: `nslookup server-svc.net-test.svc.cluster.local`
+   - HTTP connectivity: `wget -qO- http://server-svc.net-test.svc.cluster.local`
+
+Write the CNI plugin name to `/tmp/cni-plugin.txt`.

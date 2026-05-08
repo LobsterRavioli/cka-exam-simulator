@@ -1,0 +1,17 @@
+**Task** (4%)
+
+1. Create a **StorageClass** named `fast-local`:
+   - Provisioner: `rancher.io/local-path`
+   - VolumeBindingMode: `WaitForFirstConsumer`
+   - ReclaimPolicy: `Delete`
+
+2. Create a **PersistentVolumeClaim** named `fast-pvc` in namespace `default`:
+   - StorageClassName: `fast-local`
+   - AccessMode: `ReadWriteOnce`
+   - Requests: `1Gi`
+
+3. Create a **Pod** named `pvc-consumer` in namespace `default`:
+   - Image: `nginx:1.21`
+   - Mount `fast-pvc` at `/usr/share/nginx/html`
+
+**Verify:** after the Pod is scheduled, the PVC transitions to `Bound`.

@@ -1,0 +1,15 @@
+**Task** (5%)
+
+1. Add a **taint** to `node01`:
+   - Key: `dedicated`, Value: `gpu`, Effect: `NoSchedule`
+
+2. Label `node01` with `hardware=gpu`.
+
+3. Create a **Pod** named `gpu-pod` in namespace `default`:
+   - Image: `nginx:1.21`
+   - Add a **toleration** for the taint: `dedicated=gpu:NoSchedule`
+   - Add **node affinity** (requiredDuringSchedulingIgnoredDuringExecution) requiring `hardware=gpu`
+
+4. Verify `gpu-pod` is scheduled on `node01`.
+
+5. Create a second Pod named `regular-pod` (image `nginx:1.21`) with **no toleration** and verify it does **not** schedule on `node01`.

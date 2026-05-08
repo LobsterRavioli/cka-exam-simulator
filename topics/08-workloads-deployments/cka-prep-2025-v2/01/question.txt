@@ -1,0 +1,15 @@
+**Task** (4%)
+
+1. Create a **Deployment** named `nginx-deploy` in namespace `app`:
+   - Image: `nginx:1.21`
+   - Replicas: `3`
+   - Label: `app=nginx`
+   - Strategy: `RollingUpdate` with `maxSurge=1`, `maxUnavailable=0`
+
+2. Update the image to `nginx:1.25` and wait for the rollout to complete.
+
+3. Annotate the rollout with: `kubectl.kubernetes.io/change-cause="upgrade to 1.25"`
+
+4. If the rollout fails, roll back to the previous version.
+
+5. Write the current image version to `/tmp/nginx-version.txt`.

@@ -1,0 +1,20 @@
+**Task** (3%)
+
+1. Create a **PriorityClass** named `high-priority`:
+   - Value: `1000000`
+   - GlobalDefault: `false`
+   - Description: `"Used for critical production workloads"`
+
+2. Create a **PriorityClass** named `low-priority`:
+   - Value: `100`
+   - GlobalDefault: `false`
+
+3. Create a Pod named `critical-pod` in namespace `default`:
+   - Image: `nginx:1.21`
+   - PriorityClassName: `high-priority`
+
+4. Create a Pod named `background-pod` in namespace `default`:
+   - Image: `busybox:1.35`, command: `["sleep", "3600"]`
+   - PriorityClassName: `low-priority`
+
+5. Verify both pods are Running and have the correct priority.

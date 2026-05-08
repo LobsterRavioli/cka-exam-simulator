@@ -1,0 +1,31 @@
+```bash
+# Edit the deployment to add sidecar + shared volume
+kubectl patch deployment webapp -n logging --type=json -p='[
+  {
+    "op": "add",
+    "path": "/spec/template/spec/volumes",
+    "value": [{"name": "logs", "emptyDir": {}}]
+  },
+  {
+    "op": "add",
+    "path": "/spec/template/spec/containers/0/volumeMounts",
+    "value": [{"name": "logs", "mountPath": "/var/log/app"}]
+  },
+  {
+    "op": "add",
+    "path": "/spec/template/spec/containers/-",
+    "value": {
+      "name": "log-agent",
+      "image": "busybox:1.35",
+      "command": ["sh", "-c", "tail -f /var/log/app/app.log"],
+      "volumeMounts": [{"name": "logs", "mountPath": "/var/log/app"}]
+    }
+  }
+]'
+
+kubectl rollout status deployment/webapp -n logging
+
+# Verify sidecar logs
+POD=$(kubectl get pod -n logging -l app=webapp -o jsonpath='{.items[0].metadata.name}')
+kubectl logs -n logging "$POD" -c log-agent
+```

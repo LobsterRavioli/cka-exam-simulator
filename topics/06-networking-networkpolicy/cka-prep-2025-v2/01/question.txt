@@ -1,0 +1,14 @@
+**Task** (6%)
+
+Resources already exist in namespaces `production` and `monitoring`.
+
+Create a **NetworkPolicy** named `backend-policy` in namespace `production` that:
+
+1. Applies to pods with label `app=backend`
+2. **Allows ingress** from pods with label `app=frontend` **in the same namespace** on any port
+3. **Allows ingress** from any pod **in namespace `monitoring`** (label `env=monitoring`) on port `5432`
+4. **Denies all other ingress** traffic
+
+Do NOT modify any existing Deployments.
+
+**Verify:** use `kubectl exec` to test connectivity between pods.

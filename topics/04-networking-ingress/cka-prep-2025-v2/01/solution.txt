@@ -1,0 +1,29 @@
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: ingress-ns
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: app.local
+    http:
+      paths:
+      - path: /app
+        pathType: Prefix
+        backend:
+          service:
+            name: app-svc
+            port:
+              number: 80
+EOF
+
+# Add /etc/hosts entry
+echo "127.0.0.1 app.local" | sudo tee -a /etc/hosts
+
+# Verify
+kubectl get ingress app-ingress -n ingress-ns
+curl -H "Host: app.local" http://app.local/app
+```

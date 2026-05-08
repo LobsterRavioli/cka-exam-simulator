@@ -1,0 +1,17 @@
+**Task** (5%)
+
+A Service named `app-svc` (port 80) exists in namespace `gateway`.
+The Gateway API CRDs are already installed.
+
+1. Create a **Gateway** named `main-gateway` in namespace `gateway`:
+   - GatewayClassName: `nginx`
+   - Listener: port `80`, protocol `HTTP`
+
+2. Create an **HTTPRoute** named `app-route` in namespace `gateway`:
+   - Attach to gateway `main-gateway`
+   - Match hostname: `route.local`
+   - Forward all traffic to `app-svc:80`
+
+3. Add `route.local` to `/etc/hosts` pointing to `127.0.0.1`.
+
+4. Verify: `curl -H "Host: route.local" http://route.local` returns a response.
