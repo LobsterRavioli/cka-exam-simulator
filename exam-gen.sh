@@ -86,7 +86,6 @@ chmod +x "$SETUP_FILE"
 
 Q=0
 MISSING=()
-DESTRUCTIVE=()
 
 for topic_dir in "$TOPICS_DIR"/*/; do
   [[ -d "$topic_dir" ]] || continue
@@ -109,6 +108,12 @@ for topic_dir in "$TOPICS_DIR"/*/; do
   fi
 
   chosen="${vars[$((RANDOM % ${#vars[@]}))]}"
+
+  if [[ -f "$chosen/setup.bash" ]] && grep -q '^# DESTRUCTIVE' "$chosen/setup.bash" 2>/dev/null; then
+    MISSING+=("$topic (destructive, skipped)")
+    continue
+  fi
+
   var_id=$(basename "$chosen")
   domain=$(get_domain "$topic")
   Q=$((Q + 1))
@@ -144,31 +149,14 @@ for topic_dir in "$TOPICS_DIR"/*/; do
     echo ""
     echo "# Q${Q}: ${topic} / ${var_id}"
     if [[ -f "$chosen/setup.bash" ]]; then
-      if grep -q '^# DESTRUCTIVE' "$chosen/setup.bash" 2>/dev/null; then
-        rel="${chosen#"$SCRIPT_DIR/"}"
-        DESTRUCTIVE+=("Q${Q}: ${topic} — run manually: bash ${rel}setup.bash")
-      else
-        echo "("
-        cat "$chosen/setup.bash"
-        echo ") || true"
-      fi
+      echo "("
+      cat "$chosen/setup.bash"
+      echo ") || true"
     fi
     echo ""
   } >> "$SETUP_FILE"
 done
 
-if [[ ${#DESTRUCTIVE[@]} -gt 0 ]]; then
-  {
-    echo ""
-    echo "echo ''"
-    echo "echo '================================================'"
-    echo "echo ' Destructive setups (run manually when ready):'"
-    echo "echo '================================================'"
-    for note in "${DESTRUCTIVE[@]}"; do
-      echo "echo '  - ${note}'"
-    done
-  } >> "$SETUP_FILE"
-fi
 
 {
   echo ""
