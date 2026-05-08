@@ -149,7 +149,9 @@ for topic_dir in "$TOPICS_DIR"/*/; do
         DESTRUCTIVE+=("Q${Q}: ${topic} — run manually: bash ${rel}setup.bash")
         echo "echo '[SKIP] Q${Q} ${topic}: destructive setup — run manually when ready'"
       else
+        echo "("
         cat "$chosen/setup.bash"
+        echo ") || true"
       fi
     fi
     echo ""
