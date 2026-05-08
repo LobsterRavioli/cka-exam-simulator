@@ -7,18 +7,23 @@ echo "================================="
 echo ""
 
 # Q1: 01-storage-pv-pvc / 01
+(
 echo "No additional setup required."
 echo "The Killercoda playground cluster is ready to use."
+) || true
 
 
 # Q2: 02-storage-storageclass / 01
+(
 echo "Installing local-path provisioner..."
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.26/deploy/local-path-storage.yaml
 kubectl rollout status deployment/local-path-provisioner -n local-path-storage --timeout=90s
 echo "local-path provisioner ready."
+) || true
 
 
 # Q3: 03-networking-services / 01
+(
 echo "Creating namespace and deployment for networking-services..."
 kubectl create namespace web --dry-run=client -o yaml | kubectl apply -f -
 kubectl create deployment web-app \
@@ -29,9 +34,11 @@ kubectl create deployment web-app \
 kubectl label deployment web-app app=web-app -n web --overwrite
 kubectl rollout status deployment/web-app -n web --timeout=90s
 echo "Deployment 'web-app' is ready in namespace 'web'."
+) || true
 
 
 # Q4: 04-networking-ingress / 01
+(
 echo "Setting up ingress exercise environment..."
 kubectl create namespace ingress-ns --dry-run=client -o yaml | kubectl apply -f -
 kubectl create deployment app-backend \
@@ -54,9 +61,11 @@ if ! kubectl get ingressclass nginx &>/dev/null; then
   kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=120s
 fi
 echo "Setup complete. Service 'app-svc' ready in namespace 'ingress-ns'."
+) || true
 
 
 # Q5: 05-networking-gateway / 01
+(
 echo "Installing Gateway API CRDs..."
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 
@@ -73,9 +82,11 @@ kubectl expose deployment app-backend \
   --dry-run=client -o yaml | kubectl apply -f -
 kubectl rollout status deployment/app-backend -n gateway --timeout=90s
 echo "Setup complete."
+) || true
 
 
 # Q6: 06-networking-networkpolicy / 01
+(
 echo "Setting up network policy exercise..."
 kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
@@ -92,20 +103,26 @@ kubectl create deployment monitor --image=nginx:1.21 --namespace=monitoring --dr
 kubectl rollout status deployment/backend -n production --timeout=90s
 kubectl rollout status deployment/frontend -n production --timeout=90s
 echo "Setup complete."
+) || true
 
 
 # Q7: 07-networking-cni / 01
+(
 echo "No additional setup required."
 echo "Using the existing cluster CNI configuration."
+) || true
 
 
 # Q8: 08-workloads-deployments / 01
+(
 echo "Creating namespace 'app'..."
 kubectl create namespace app --dry-run=client -o yaml | kubectl apply -f -
 echo "Namespace ready."
+) || true
 
 
 # Q9: 09-workloads-sidecar / 01
+(
 echo "Setting up sidecar exercise..."
 kubectl create namespace logging --dry-run=client -o yaml | kubectl apply -f -
 
@@ -133,9 +150,11 @@ EOF
 
 kubectl rollout status deployment/webapp -n logging --timeout=90s
 echo "Deployment 'webapp' is ready in namespace 'logging'."
+) || true
 
 
 # Q10: 10-workloads-resources / 01
+(
 echo "Setting up resources exercise..."
 kubectl create namespace production --dry-run=client -o yaml | kubectl apply -f -
 kubectl create deployment api-server \
@@ -145,9 +164,11 @@ kubectl create deployment api-server \
   --dry-run=client -o yaml | kubectl apply -f -
 kubectl rollout status deployment/api-server -n production --timeout=90s
 echo "Deployment 'api-server' ready in namespace 'production'."
+) || true
 
 
 # Q11: 11-workloads-hpa / 01
+(
 echo "Setting up HPA exercise..."
 kubectl create namespace autoscale --dry-run=client -o yaml | kubectl apply -f -
 kubectl create deployment web-api \
@@ -166,57 +187,42 @@ if ! kubectl get deployment metrics-server -n kube-system &>/dev/null; then
     -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
 fi
 echo "Setup complete."
+) || true
 
 
 # Q12: 12-workloads-scheduling / 01
+(
 echo "Verifying cluster nodes..."
 kubectl get nodes
 echo ""
 echo "Note: this exercise uses 'node01'. Adjust the node name if your cluster uses a different name."
 echo "Check available nodes with: kubectl get nodes"
+) || true
 
 
 # Q13: 13-workloads-priorityclass / 01
+(
 echo "No additional setup required for PriorityClass exercise."
+) || true
 
 
 # Q14: 14-cluster-rbac / 01
+(
 echo "Creating namespace 'ci'..."
 kubectl create namespace ci --dry-run=client -o yaml | kubectl apply -f -
 echo "Namespace 'ci' ready."
+) || true
 
 
 # Q15: 15-cluster-crd / 01
+(
 echo "No additional setup required."
 echo "You will install cert-manager as part of the exercise."
+) || true
 
 
-# Q16: 16-cluster-etcd / 01
-echo "============================================================"
-echo "  WARNING: This setup BREAKS the kube-apiserver."
-echo "  Only run this if you are prepared to fix it immediately."
-echo "============================================================"
-echo ""
-read -r -p "Continue? (yes/no): " answer
-if [[ "$answer" != "yes" ]]; then
-  echo "Aborted."
-  exit 0
-fi
-
-echo "Backing up kube-apiserver manifest..."
-cp /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/kube-apiserver-backup.yaml
-
-echo "Injecting wrong etcd port (2379 -> 1234)..."
-sed -i 's|etcd-servers=https://127.0.0.1:2379|etcd-servers=https://127.0.0.1:1234|' \
-  /etc/kubernetes/manifests/kube-apiserver.yaml
-
-echo "Waiting for kube-apiserver to fail..."
-sleep 10
-echo "Done. kube-apiserver is now misconfigured. Fix it!"
-echo "Backup: /tmp/kube-apiserver-backup.yaml"
-
-
-# Q17: 17-cluster-helm / 01
+# Q16: 17-cluster-helm / 01
+(
 echo "Checking Helm installation..."
 if ! command -v helm &>/dev/null; then
   echo "Installing Helm..."
@@ -224,9 +230,12 @@ if ! command -v helm &>/dev/null; then
 fi
 helm version
 echo "Helm is ready."
+) || true
 
 
-# Q18: 18-cluster-tls / 01
+# Q17: 18-cluster-tls / 01
+(
 echo "No additional setup required."
 echo "You will edit /etc/kubernetes/manifests/kube-apiserver.yaml directly."
+) || true
 

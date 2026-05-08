@@ -1,8 +1,8 @@
 # CKA Practice Exam — cka-prep-2025-v2
 
-**Generated:** Ven  8 Mag 2026 11:50:07 CEST
+**Generated:** Ven  8 Mag 2026 12:15:11 CEST
 **Type:** cka-prep-2025-v2
-**Seed:** 42
+**Seed:** none (random)
 
 > Run `bash setup.bash` on Killercoda before starting.
 
@@ -1006,62 +1006,7 @@ kubectl get certificate test-cert -n default
 
 ---
 
-## Question 16 — 16-cluster-etcd
-
-**Domain:** Cluster Architecture (25%)  
-**Variation:** 01
-
-**Task** (7%)
-
-The kube-apiserver is failing to start. Pods on the cluster are not being scheduled.
-
-1. Investigate why the kube-apiserver is not running:
-   - Check `/etc/kubernetes/manifests/kube-apiserver.yaml`
-   - Check `crictl ps -a | grep apiserver`
-   - Check kubelet logs: `journalctl -u kubelet | tail -50`
-
-2. The `--etcd-servers` flag contains an incorrect port. The correct etcd port is `2379`.
-
-3. Fix the static pod manifest and wait for the kube-apiserver to recover.
-
-4. Verify the cluster is healthy:
-   ```
-   kubectl get nodes
-   kubectl get pods -n kube-system
-   ```
-
-> **Warning:** this exercise modifies a static pod manifest. Be careful with YAML indentation.
-
-<details>
-<summary>Solution</summary>
-
-```bash
-# Inspect the manifest
-grep etcd-servers /etc/kubernetes/manifests/kube-apiserver.yaml
-
-# Fix the port: 1234 -> 2379
-sed -i 's|etcd-servers=https://127.0.0.1:1234|etcd-servers=https://127.0.0.1:2379|' \
-  /etc/kubernetes/manifests/kube-apiserver.yaml
-
-# Verify the fix
-grep etcd-servers /etc/kubernetes/manifests/kube-apiserver.yaml
-
-# kubelet picks up the manifest change automatically; wait for recovery
-echo "Waiting for kube-apiserver to restart..."
-sleep 20
-
-kubectl get nodes
-kubectl get pods -n kube-system | grep apiserver
-
-# Alternative: restore from backup
-# cp /tmp/kube-apiserver-backup.yaml /etc/kubernetes/manifests/kube-apiserver.yaml
-```
-
-</details>
-
----
-
-## Question 17 — 17-cluster-helm
+## Question 16 — 17-cluster-helm
 
 **Domain:** Cluster Architecture (25%)  
 **Variation:** 01
@@ -1112,7 +1057,7 @@ cat /tmp/argocd-port.txt
 
 ---
 
-## Question 18 — 18-cluster-tls
+## Question 17 — 18-cluster-tls
 
 **Domain:** Cluster Architecture (25%)  
 **Variation:** 01
@@ -1177,4 +1122,4 @@ kubectl create configmap tls-config \
 
 ---
 
-_Total: **18 / 18** questions included._
+_Total: **17 / 18** questions included._
