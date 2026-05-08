@@ -147,7 +147,6 @@ for topic_dir in "$TOPICS_DIR"/*/; do
       if grep -q '^# DESTRUCTIVE' "$chosen/setup.bash" 2>/dev/null; then
         rel="${chosen#"$SCRIPT_DIR/"}"
         DESTRUCTIVE+=("Q${Q}: ${topic} — run manually: bash ${rel}setup.bash")
-        echo "echo '[SKIP] Q${Q} ${topic}: destructive setup — run manually when ready'"
       else
         echo "("
         cat "$chosen/setup.bash"
