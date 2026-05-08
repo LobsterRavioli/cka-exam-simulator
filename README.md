@@ -79,6 +79,40 @@ topics/
 
 The generator picks **one variation at random** per topic per run.
 
+### Destructive setups
+
+Some exercises intentionally break the cluster (e.g. corrupting the kube-apiserver config) so you can practise troubleshooting. Mark those `setup.bash` files with a comment on the first line:
+
+```bash
+# DESTRUCTIVE
+...
+```
+
+The global `setup.bash` will **skip** them automatically and print a note at the end:
+
+```
+Destructive setups (run manually when ready):
+  - Q16: 16-cluster-etcd — run manually: bash topics/16-cluster-etcd/cka-prep-2025-v2/01/setup.bash
+```
+
+Run them explicitly when you are ready for that specific exercise.
+
+## Workflow on Killercoda
+
+```bash
+# 1. On your Mac — generate and push
+./exam-gen.sh cka-prep-2025-v2 --seed 42
+git add . && git commit -m "add exam" && git push
+
+# 2. On Killercoda — clone and set up
+git clone https://github.com/LobsterRavioli/cka-exam-simulator.git
+cd cka-exam-simulator
+bash exams/<timestamp>-cka-prep-2025-v2/setup.bash
+
+# 3. Open the exam
+cat exams/<timestamp>-cka-prep-2025-v2/exam.md
+```
+
 ## Requirements
 
 - bash 3.2+ (macOS default is fine)
